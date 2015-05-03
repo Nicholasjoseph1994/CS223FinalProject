@@ -48,28 +48,28 @@ def correctHead (head, setsByDegree):
     while len(setsByDegree[head]) == 0:
         head -= 1
     return head
+
 """
 H is a hypergraph represented as a set of vertices and a set of sets of vertices
 k is the number of seed nodes
 """
 def buildSeedSet(H, k):
     # initialize
-    verticesByDegree = [set() for _ in range(n)]
+    verticesByDegree = [set() for _ in xrange(n)]
     head = -1
     for node, edges in enumerate(H):
         verticesByDegree[len(edges)].add(node)
-    head = correctHead(head, verticesByDegree)
 
-    minVertex = verticesByDegree[head].pop()
-    for edges in H[minVertex]:
+    vk = []
+    for _ in xrange(k):
+        head = correctHead(head, verticesByDegree)
+        minVertex = verticesByDegree[head].pop()
+        vk.append(minVertex)
+        for edge in H[minVertex]:
+            for n in edge:
+                deg = len(H[n])
+                H[n].remove(edge)
+                verticesByDegree[deg].remove(n)
+                verticesByDegree[deg-1].add(n)
 
-
-
-
-
-    for k, v in d[n2]:
-        deg[k] -= v
-        del d[k][n2]
-    d[n2] = {}
-    pass
-
+    return vk
