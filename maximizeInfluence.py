@@ -113,9 +113,10 @@ def test1():
     G.append([])
 
 
-    G = uniformize(transpose(G), .5)
+    n = 14
+    G = uniformize(transpose(G, n), .5)
 
-    print maximizeInfluence(.5, G, 14, 12, 2)
+    print maximizeInfluence(.5, G, n, 12, 2)
 
 if __name__ == '__main__':
     test1()
