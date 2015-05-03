@@ -9,7 +9,7 @@ n is the number of vertices
 m is the number of edges
 """
 def maximizeInfluence(eps, Gt, n, m, k):
-    R = int(144 * n * m * math.log(n) / (float(eps)**3))
+    R = int(144 * (n + m) * math.log(n) / (float(eps)**3))
     print R
     H = buildHyperGraph(R, Gt, n, m)
     return buildSeedSet(H, k, R)
