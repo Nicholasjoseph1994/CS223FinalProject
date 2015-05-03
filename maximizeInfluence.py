@@ -76,5 +76,20 @@ def buildSeedSet(H, k):
     return vk
 
 
-    
+def test1():
+    G = []
+    G.append([1, 2])
+    G.append([3, 4])
+    G.append([5, 6])
+    G.append([])
+    G.append([])
+    G.append([])
+    G.append([])
 
+    G.append([8, 9])
+    G.append([10, 11])
+    G.append([12, 13])
+    G.append([])
+    G.append([])
+    G.append([])
+    G.append([])
