@@ -1,3 +1,5 @@
+import random
+import math
 from collections import Counter
 
 """
@@ -7,7 +9,7 @@ n is the number of vertices
 m is the number of edges
 """
 def maximizeInfluence(eps, G, n, m):
-    R = int(144 * n * m * Math.log(n) / (float(eps)**3))
+    R = int(144 * n * m * math.log(n) / (float(eps)**3))
     H = buildHyperGraph(R, G, n, m)
     return buildSeedSet(H, k)
 
