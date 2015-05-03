@@ -1,5 +1,6 @@
 import random
 import math
+import numpy as np
 from collections import Counter
 
 """
@@ -8,10 +9,12 @@ G is a directed edge weighted graph
 n is the number of vertices
 m is the number of edges
 """
-def maximizeInfluence(eps, Gt, n, m):
+def maximizeInfluence(eps, Gt, n, m, k):
     R = int(144 * n * m * math.log(n) / (float(eps)**3))
+    print R
     H = buildHyperGraph(R, Gt, n, m)
-    return buildSeedSet(H, k)
+#    print H
+    return buildSeedSet(H, k, n)
 
 """
 R is the number of steps to take before terminating
@@ -23,10 +26,11 @@ def buildHyperGraph(R, Gt, n, m):
     counter = 0
     while counter < R:
         u = random.randrange(n)
-        Z = simulateSpread(Gt, u, H)
-        for n in Z:
-            H[n].append(Z)
+        Z = simulateSpread(Gt, u)
+        for n2 in Z:
+            H[n2].append(Z)
         counter += len(Z)
+    return H
 
 """
 Gt is the transpose of the graph
@@ -54,11 +58,12 @@ def correctHead (head, setsByDegree):
 H is a hypergraph represented as a set of vertices and a set of sets of vertices
 k is the number of seed nodes
 """
-def buildSeedSet(H, k):
+def buildSeedSet(H, k, n):
     # initialize
     verticesByDegree = [set() for _ in xrange(n)]
     head = -1
     for node, edges in enumerate(H):
+        print len(edges)
         verticesByDegree[len(edges)].add(node)
 
     vk = []
@@ -75,6 +80,10 @@ def buildSeedSet(H, k):
 
     return vk
 
+def uniformize(G, p):
+    for node, edges in enumerate(G):
+        G[node] = [(i, p) for i in edges]
+    return G
 
 def test1():
     G = []
@@ -93,3 +102,10 @@ def test1():
     G.append([])
     G.append([])
     G.append([])
+
+    G = uniformize(np.transpose(G), .5)
+
+    print maximizeInfluence(.5, G, 14, 12, 2)
+
+if __name__ == '__main__':
+    test1()
