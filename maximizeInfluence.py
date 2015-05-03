@@ -85,6 +85,15 @@ def uniformize(G, p):
         G[node] = [(i, p) for i in edges]
     return G
 
+def transpose(G, n):
+    G2 = [[] for _ in xrange(n)]
+
+    for n, edges in enumerate(G):
+        for n2 in edges:
+            G2[n2].append(n)
+
+    return G2
+
 def test1():
     G = []
     G.append([1, 2])
@@ -103,7 +112,8 @@ def test1():
     G.append([])
     G.append([])
 
-    G = uniformize(np.transpose(G), .5)
+
+    G = uniformize(transpose(G), .5)
 
     print maximizeInfluence(.5, G, 14, 12, 2)
 
