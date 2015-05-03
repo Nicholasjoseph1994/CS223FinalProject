@@ -1,3 +1,5 @@
+from collections import Counter
+
 """
 eps is precision parameter between 0 and 1
 G is a directed edge weighted graph
@@ -6,7 +8,7 @@ m is the number of edges
 """
 def maximizeInfluence(eps, G, n, m):
     R = int(144 * n * m * Math.log(n) / (float(eps)**3))
-    H = buildHypergraph(R, G, n, m)
+    H = buildHyperGraph(R, G, n, m)
     return buildSeedSet(H, k)
 
 """
@@ -14,13 +16,15 @@ R is the number of steps to take before terminating
 G is a directed edge weighted graph
 """
 def buildHyperGraph(R, G, n, m):
-    H = (set(range(n)), set())
+    #H is a list of lists of sets, h[n][i] is the ith edge that n is in (edges are sets)
+    H = [[] for _ in xrange(n)]
     counter = 0
     Gt = transpose(g)
     while counter < R:
         u = random.randrange(n)
-        Z = simulateSpread(Gt, u)
-        H[1].add(Z)
+        Z = simulateSpread(Gt, u, H)
+        for n in Z:
+            H[n].append(Z)
         counter += len(Z)
 
 """
@@ -29,15 +33,43 @@ u is the starting node
 returns the set of all nodes discovered
 """
 def simulateSpread(Gt, u):
+    V = set([u])
     stack = [u]
     while len(stack):
-        n = stack.pop(0)
-        for nextVertex in Gt[u]:
-            
+        n = stack.pop()
+        for nextVertex in Gt[n]:
+            n2 = nextVertex[0]
+            if random.random() < nextVertex[1] and n2 not in V:
+                stack.append(n2)
+                V.add(n2)
+    return V
 
+def correctHead (head, setsByDegree):
+    while len(setsByDegree[head]) == 0:
+        head -= 1
+    return head
 """
 H is a hypergraph represented as a set of vertices and a set of sets of vertices
 k is the number of seed nodes
 """
 def buildSeedSet(H, k):
+    # initialize
+    verticesByDegree = [set() for _ in range(n)]
+    head = -1
+    for node, edges in enumerate(H):
+        verticesByDegree[len(edges)].add(node)
+    head = correctHead(head, verticesByDegree)
+
+    minVertex = verticesByDegree[head].pop()
+    for edges in H[minVertex]:
+
+
+
+
+
+    for k, v in d[n2]:
+        deg[k] -= v
+        del d[k][n2]
+    d[n2] = {}
     pass
+
