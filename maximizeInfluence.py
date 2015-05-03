@@ -8,20 +8,19 @@ G is a directed edge weighted graph
 n is the number of vertices
 m is the number of edges
 """
-def maximizeInfluence(eps, G, n, m):
+def maximizeInfluence(eps, Gt, n, m):
     R = int(144 * n * m * math.log(n) / (float(eps)**3))
-    H = buildHyperGraph(R, G, n, m)
+    H = buildHyperGraph(R, Gt, n, m)
     return buildSeedSet(H, k)
 
 """
 R is the number of steps to take before terminating
 G is a directed edge weighted graph
 """
-def buildHyperGraph(R, G, n, m):
+def buildHyperGraph(R, Gt, n, m):
     #H is a list of lists of sets, h[n][i] is the ith edge that n is in (edges are sets)
     H = [[] for _ in xrange(n)]
     counter = 0
-    Gt = transpose(g)
     while counter < R:
         u = random.randrange(n)
         Z = simulateSpread(Gt, u, H)
@@ -75,3 +74,7 @@ def buildSeedSet(H, k):
                 verticesByDegree[deg-1].add(n)
 
     return vk
+
+
+    
+
