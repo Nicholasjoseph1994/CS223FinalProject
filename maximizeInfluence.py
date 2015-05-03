@@ -1,6 +1,5 @@
 import random
 import math
-import numpy as np
 from collections import Counter
 
 """
@@ -13,8 +12,7 @@ def maximizeInfluence(eps, Gt, n, m, k):
     R = int(144 * n * m * math.log(n) / (float(eps)**3))
     print R
     H = buildHyperGraph(R, Gt, n, m)
-#    print H
-    return buildSeedSet(H, k, n)
+    return buildSeedSet(H, k, R)
 
 """
 R is the number of steps to take before terminating
@@ -58,12 +56,11 @@ def correctHead (head, setsByDegree):
 H is a hypergraph represented as a set of vertices and a set of sets of vertices
 k is the number of seed nodes
 """
-def buildSeedSet(H, k, n):
+def buildSeedSet(H, k, R):
     # initialize
-    verticesByDegree = [set() for _ in xrange(n)]
+    verticesByDegree = [set() for _ in xrange(R)]
     head = -1
     for node, edges in enumerate(H):
-        print len(edges)
         verticesByDegree[len(edges)].add(node)
 
     vk = []
@@ -73,10 +70,14 @@ def buildSeedSet(H, k, n):
         vk.append(minVertex)
         for edge in H[minVertex]:
             for n in edge:
+                if n == minVertex:
+                    continue
                 deg = len(H[n])
                 H[n].remove(edge)
                 verticesByDegree[deg].remove(n)
                 verticesByDegree[deg-1].add(n)
+        H[minVertex] = set()
+
 
     return vk
 
@@ -114,6 +115,7 @@ def test1():
 
 
     n = 14
+
     G = uniformize(transpose(G, n), .5)
 
     print maximizeInfluence(.5, G, n, 12, 2)
