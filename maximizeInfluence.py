@@ -36,6 +36,7 @@ def buildHyperGraph(R, Gt, n, m):
     #H is a list of lists of sets, h[n][i] is the ith edge that n is in (edges are sets)
     H = [set() for _ in xrange(n)]
     degs = [0 for _ in xrange(n)]
+    twodegs = [Counter() for _ in xrange(n)]
     counter = 0
     i = 0
     while counter < R:
@@ -43,6 +44,10 @@ def buildHyperGraph(R, Gt, n, m):
         Z = simulateSpread(Gt, [u])
         if len(Z) == 1:
             degs[Z[0]] += 1
+        elif len(Z) == 2:
+            e1, e2 = Z[0], Z[1]
+            twodegs[e1][e2] += 1
+            twodegs[e2][e1] += 1
         else:
             for n2 in Z:
                 H[n2].add(HashableSet(Z))
@@ -83,7 +88,7 @@ def buildSeedSet(H, k, R, degs):
     verticesByDegree = [set() for _ in xrange(R)]
     head = -1
     for node, edges in enumerate(H):
-        verticesByDegree[len(edges) + degs[node]].add(node)
+        verticesByDegree[len(edges) + degs[node] + sum(twodegs[node].values())].add(node)
 
     print 'building seed set'
 
@@ -98,10 +103,16 @@ def buildSeedSet(H, k, R, degs):
                 counter += 1
                 if n == minVertex:
                     continue
-                deg = len(H[n]) + degs[n]
+                deg = len(H[n]) + degs[n] + sum(twodegs[n].values())
                 H[n].remove(edge)
                 verticesByDegree[deg].remove(n)
                 verticesByDegree[deg-1].add(n)
+        for n, count in twodegs[minVertex].iteritems():
+            twodegcount = sum(twodegs[n].values())
+            twodegs[n][minVertex] = 0
+            deg = len(H[n]) + degs[n] + twodegcount
+            verticesByDegree[deg].remove(n)
+            verticesByDegree[deg-twodegs[n][minVertex]].add(n)
         H[minVertex] = set()
         print 'found %dth vector' % i
 
