@@ -2,6 +2,10 @@ import random
 import math
 from collections import Counter
 
+p = .01
+eps = .5
+k = 50
+
 """
 eps is precision parameter between 0 and 1
 G is a directed edge weighted graph
@@ -95,6 +99,19 @@ def transpose(G, n):
 
     return G2
 
+def readGraph(file):
+    with open(file, 'r') as f:
+        it = iter(f.readlines())
+        first = next(it)
+        n = int(first.split(' ')[0])
+        m = int(first.split(' ')[1])
+        G = [[] for _ in xrange(n)]
+        for l in it:
+            n1, n2 = l.split(' ')[:2]
+            G[int(n2)].append(int(n1))
+
+    return G, n, m
+
 def test1():
     G = []
     G.append([1, 2])
@@ -115,10 +132,19 @@ def test1():
 
 
     n = 14
+    m = 12
 
-    G = uniformize(transpose(G, n), .5)
+    G = uniformize(transpose(G, n), p)
 
-    print maximizeInfluence(.5, G, n, 12, 2)
+    print maximizeInfluence(eps, G, n, m, k)
+
+def test2():
+    file = 'hep.txt'
+    G, n, m = readGraph(file)
+    G = uniformize(G, p)
+
+    print maximizeInfluence(eps, G, n, m, k)
 
 if __name__ == '__main__':
-    test1()
+#    test1()
+    test2()
