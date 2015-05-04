@@ -75,20 +75,25 @@ def simulateSpread(Gt, vk):
     return list(V)
 
 def correctHead (head, setsByDegree):
-    while len(setsByDegree[head]) == 0:
+    while setsByDegree[head] or len(setsByDegree[head]) == 0:
         head -= 1
     return head
 
+def addToSet(verticesByDegree, degree, node):
+    if verticesByDegree[degree]:
+        verticesByDegree[degree].add(node)
+    else:
+        verticesByDegree[degree] = set([node])
 """
 H is a hypergraph represented as a set of vertices and a set of sets of vertices
 k is the number of seed nodes
 """
 def buildSeedSet(H, k, R, degs, twodegs):
     # initialize
-    verticesByDegree = [set() for _ in xrange(R)]
+    verticesByDegree = [None for _ in xrange(R)]
     head = -1
     for node, edges in enumerate(H):
-        verticesByDegree[len(edges) + degs[node] + sum(twodegs[node].values())].add(node)
+        addToSet(verticesByDegree, len(edges) + degs[node] + sum(twodegs[node].values()), node)
 
     print 'building seed set'
 
@@ -106,12 +111,12 @@ def buildSeedSet(H, k, R, degs, twodegs):
                 deg = len(H[n]) + degs[n] + sum(twodegs[n].values())
                 H[n].remove(edge)
                 verticesByDegree[deg].remove(n)
-                verticesByDegree[deg-1].add(n)
+                addToSet(verticesByDegree, deg-1, n)
         for n, count in twodegs[minVertex].iteritems():
             twodegcount = sum(twodegs[n].values())
             deg = len(H[n]) + degs[n] + twodegcount
             verticesByDegree[deg].remove(n)
-            verticesByDegree[deg-twodegs[n][minVertex]].add(n)
+            addToSet(verticesByDegree, deg - twodegs[n][minVertex], n)
             del twodegs[n][minVertex]
         H[minVertex] = set()
         print 'found %dth vector' % i
