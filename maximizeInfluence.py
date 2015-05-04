@@ -75,7 +75,7 @@ def simulateSpread(Gt, vk):
     return list(V)
 
 def correctHead (head, setsByDegree):
-    while setsByDegree[head] or len(setsByDegree[head]) == 0:
+    while not setsByDegree[head] or len(setsByDegree[head]) == 0:
         head -= 1
     return head
 
