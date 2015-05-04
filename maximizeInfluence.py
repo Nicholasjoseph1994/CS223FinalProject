@@ -1,6 +1,8 @@
 import random
 import math
 import time
+import sys
+from collections import Counter
 class HashableSet:
     def __init__(self, _set):
         self._set = _set
@@ -9,9 +11,10 @@ class HashableSet:
     def __hash__(self):
         return id(self._set)
 
+
 p = .01
 eps = .5
-k = 50
+k = int(sys.argv[1])
 
 """
 eps is precision parameter between 0 and 1
@@ -32,12 +35,17 @@ def buildHyperGraph(R, Gt, n, m):
     #H is a list of lists of sets, h[n][i] is the ith edge that n is in (edges are sets)
     H = [set() for _ in xrange(n)]
     counter = 0
+    i = 0
     while counter < R:
         u = random.randrange(n)
-        Z = simulateSpread(Gt, u)
+        Z = simulateSpread(Gt, [u])
         for n2 in Z:
             H[n2].add(HashableSet(Z))
         counter += len(Z)
+
+        i += 1
+        if i % (R/10) == 0:
+            print 'round %d' % i
     return H
 
 """
@@ -45,9 +53,9 @@ Gt is the transpose of the graph
 u is the starting node
 returns the set of all nodes discovered
 """
-def simulateSpread(Gt, u):
-    V = set([u])
-    stack = [u]
+def simulateSpread(Gt, vk):
+    V = set(vk)
+    stack = list(vk)
     while len(stack):
         n = stack.pop()
         for nextVertex in Gt[n]:
@@ -73,8 +81,10 @@ def buildSeedSet(H, k, R):
     for node, edges in enumerate(H):
         verticesByDegree[len(edges)].add(node)
 
+    print 'building seed set'
+
     vk = []
-    for _ in xrange(k):
+    for i in xrange(k):
         head = correctHead(head, verticesByDegree)
         minVertex = verticesByDegree[head].pop()
         vk.append(minVertex)
@@ -89,6 +99,7 @@ def buildSeedSet(H, k, R):
                 verticesByDegree[deg].remove(n)
                 verticesByDegree[deg-1].add(n)
         H[minVertex] = set()
+        print 'found %dth vector' % i
 
     return vk
 
@@ -101,10 +112,19 @@ def transpose(G, n):
     G2 = [[] for _ in xrange(n)]
 
     for n, edges in enumerate(G):
-        for n2 in edges:
-            G2[n2].append(n)
+        for (n2, p) in edges:
+            G2[n2].append((n, p))
 
     return G2
+
+def estimateSpread(G, vk):
+    counter = 0
+    iter = 10000
+    for i in xrange(iter):
+        n = len(simulateSpread(G, vk))
+        counter += n
+
+    return counter / float(iter)
 
 def readGraph(file):
     with open(file, 'r') as f:
@@ -141,17 +161,23 @@ def test1():
     n = 14
     m = 12
 
-    G = uniformize(transpose(G, n), p)
+    G = uniformize(G, p)
+    G2 = transpose(G, n)
 
-    print maximizeInfluence(eps, G, n, m, k)
+    vk = maximizeInfluence(eps, G2, n, m, k)
+    print vk
+    print estimateSpread(G, vk)
 
 def test2():
-    file = 'hep.txt'
+    file = 'graph30.txt'
     G, n, m = readGraph(file)
     G = uniformize(G, p)
 
-    print maximizeInfluence(eps, G, n, m, k)
+    vk = maximizeInfluence(eps, G, n, m, k)
+
+    print vk
+    print estimateSpread(transpose(G, n), vk)
 
 if __name__ == '__main__':
-#    test1()
-    test2()
+    test1()
+    #test2()
