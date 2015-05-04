@@ -25,8 +25,8 @@ m is the number of edges
 """
 def maximizeInfluence(eps, Gt, n, m, k):
     R = int(144 * (n + m) * math.log(n) / (float(eps)**3))
-    H, degs = buildHyperGraph(R, Gt, n, m)
-    return buildSeedSet(H, k, R, degs)
+    H, degs, twodegs = buildHyperGraph(R, Gt, n, m)
+    return buildSeedSet(H, k, R, degs, twodegs)
 
 """
 R is the number of steps to take before terminating
@@ -55,7 +55,7 @@ def buildHyperGraph(R, Gt, n, m):
         i += 1
         if i % (R/10) == 0:
             print 'round %d' % i
-    return H, degs
+    return H, degs, twodegs
 
 """
 Gt is the transpose of the graph
@@ -83,7 +83,7 @@ def correctHead (head, setsByDegree):
 H is a hypergraph represented as a set of vertices and a set of sets of vertices
 k is the number of seed nodes
 """
-def buildSeedSet(H, k, R, degs):
+def buildSeedSet(H, k, R, degs, twodegs):
     # initialize
     verticesByDegree = [set() for _ in xrange(R)]
     head = -1
@@ -194,6 +194,6 @@ def test2():
     print estimateSpread(transpose(G, n), vk)
 
 if __name__ == '__main__':
-    # test1()
-    test2()
+    test1()
+    # test2()
     print resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
