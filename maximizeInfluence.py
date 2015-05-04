@@ -1,6 +1,13 @@
 import random
 import math
-from collections import Counter
+import time
+class HashableSet:
+    def __init__(self, _set):
+        self._set = _set
+    def __eq__(self, other):
+        return self._set is other._set
+    def __hash__(self):
+        return id(self._set)
 
 """
 eps is precision parameter between 0 and 1
@@ -9,8 +16,7 @@ n is the number of vertices
 m is the number of edges
 """
 def maximizeInfluence(eps, Gt, n, m, k):
-    R = int(144 * (n + m) * math.log(n) / (float(eps)**3))
-    print R
+    R = int(30*144 * (n + m) * math.log(n) / (float(eps)**3))
     H = buildHyperGraph(R, Gt, n, m)
     return buildSeedSet(H, k, R)
 
@@ -20,13 +26,13 @@ G is a directed edge weighted graph
 """
 def buildHyperGraph(R, Gt, n, m):
     #H is a list of lists of sets, h[n][i] is the ith edge that n is in (edges are sets)
-    H = [[] for _ in xrange(n)]
+    H = [set() for _ in xrange(n)]
     counter = 0
     while counter < R:
         u = random.randrange(n)
         Z = simulateSpread(Gt, u)
         for n2 in Z:
-            H[n2].append(Z)
+            H[n2].add(HashableSet(Z))
         counter += len(Z)
     return H
 
@@ -68,8 +74,10 @@ def buildSeedSet(H, k, R):
         head = correctHead(head, verticesByDegree)
         minVertex = verticesByDegree[head].pop()
         vk.append(minVertex)
+        counter = 0
         for edge in H[minVertex]:
-            for n in edge:
+            for n in edge._set:
+                counter += 1
                 if n == minVertex:
                     continue
                 deg = len(H[n])
@@ -77,7 +85,6 @@ def buildSeedSet(H, k, R):
                 verticesByDegree[deg].remove(n)
                 verticesByDegree[deg-1].add(n)
         H[minVertex] = set()
-
 
     return vk
 
