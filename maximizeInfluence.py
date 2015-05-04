@@ -23,7 +23,8 @@ n is the number of vertices
 m is the number of edges
 """
 def maximizeInfluence(eps, Gt, n, m, k):
-    R = int(30*144 * (n + m) * math.log(n) / (float(eps)**3))
+    R = int(144 * (n + m) * math.log(n) / (float(eps)**3))
+    print R
     H = buildHyperGraph(R, Gt, n, m)
     return buildSeedSet(H, k, R)
 
@@ -169,7 +170,7 @@ def test1():
     print estimateSpread(G, vk)
 
 def test2():
-    file = 'graph30.txt'
+    file = 'hep.txt'
     G, n, m = readGraph(file)
     G = uniformize(G, p)
 
@@ -179,5 +180,5 @@ def test2():
     print estimateSpread(transpose(G, n), vk)
 
 if __name__ == '__main__':
-    test1()
-    #test2()
+    #test1()
+    test2()
