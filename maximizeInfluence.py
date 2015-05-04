@@ -173,7 +173,7 @@ def test1():
     print estimateSpread(G, vk)
 
 def test2():
-    file = 'graph30.txt'
+    file = 'hep.txt'
     G, n, m = readGraph(file)
     G = uniformize(G, p)
 
