@@ -109,10 +109,10 @@ def buildSeedSet(H, k, R, degs, twodegs):
                 verticesByDegree[deg-1].add(n)
         for n, count in twodegs[minVertex].iteritems():
             twodegcount = sum(twodegs[n].values())
-            twodegs[n][minVertex] = 0
             deg = len(H[n]) + degs[n] + twodegcount
             verticesByDegree[deg].remove(n)
             verticesByDegree[deg-twodegs[n][minVertex]].add(n)
+            del twodegs[n][minVertex]
         H[minVertex] = set()
         print 'found %dth vector' % i
 
@@ -184,7 +184,7 @@ def test1():
     print estimateSpread(G, vk)
 
 def test2():
-    file = 'hep.txt'
+    file = 'graph30.txt'
     G, n, m = readGraph(file)
     G = uniformize(G, p)
 
@@ -194,6 +194,6 @@ def test2():
     print estimateSpread(transpose(G, n), vk)
 
 if __name__ == '__main__':
-    test1()
-    # test2()
+    #test1()
+    test2()
     print resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
