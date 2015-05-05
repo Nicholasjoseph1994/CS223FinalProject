@@ -2,7 +2,6 @@ import random
 import math
 import time
 import sys
-import resource
 from collections import Counter
 class HashableSet:
     def __init__(self, _set):
@@ -14,7 +13,7 @@ class HashableSet:
 
 
 p = .01
-eps = .5
+eps = .8
 k = int(sys.argv[1])
 
 """
@@ -53,7 +52,7 @@ def buildHyperGraph(R, Gt, n, m):
                 H[n2].add(HashableSet(Z))
         counter += len(Z)
         i += 1
-        if i % (R/10) == 0:
+        if i % (R/1000) == 0:
             print 'round %d' % i
     return H, degs, twodegs
 
@@ -202,4 +201,3 @@ def test2():
 if __name__ == '__main__':
     #test1()
     test2()
-    print resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
