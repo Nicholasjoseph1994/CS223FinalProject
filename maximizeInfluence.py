@@ -156,6 +156,7 @@ def readGraph(file):
         for l in it:
             n1, n2 = l.split(' ')[:2]
             G[int(n2)].append(int(n1))
+            G[int(n1)].append(int(n2))
 
     return G, n, m
 
@@ -189,7 +190,7 @@ def test1():
     print estimateSpread(G, vk)
 
 def test2():
-    file = 'graph30.txt'
+    file = 'hep.txt'
     G, n, m = readGraph(file)
     G = uniformize(G, p)
 
